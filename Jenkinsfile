@@ -47,7 +47,7 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 waitForQualityGate abortPipeline: false,
-                                  credentialsId: 'sonar-token'
+                                  credentialsId: 'my-token'
             }
         }
 
@@ -81,8 +81,8 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'docker-password') {
                         sh '''
-                        docker tag zomato-app sagarbarve/zomato-app:latest
-                        docker push sagarbarve/zomato-app:latest
+                        docker tag zomato-app Akash/zomato-app:latest
+                        docker push Akash/zomato-app:latest
                         '''
                     }
                 }
@@ -91,7 +91,7 @@ pipeline {
 
         stage('Trivy Image Scan') {
             steps {
-                sh 'trivy image sagarbarve/zomato-app:latest'
+                sh 'trivy image Akash/zomato-app:latest'
             }
         }
 
@@ -102,7 +102,7 @@ pipeline {
                 docker run -d \
                 --name zomato-container \
                 -p 3000:3000 \
-                sagarbarve/zomato-app:latest
+                Akash/zomato-app:latest
                 '''
             }
         }
