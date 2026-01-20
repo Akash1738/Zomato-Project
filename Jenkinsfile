@@ -22,7 +22,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/cs7165/Zomato-Project.git'
+                    url: 'https://https://github.com/Akash1738/Zomato-Project.git'
             }
         }
 
