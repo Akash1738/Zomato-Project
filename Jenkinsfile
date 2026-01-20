@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-        SCANNER_HOME = tool 'mysonar'
-        IMAGE_NAME   = "sagarbarve/zomato-app:latest"
+        SCANNER_HOME = tool 'sonar'
+        IMAGE_NAME   = "Akash/zomato-app:latest"
     }
 
     stages {
@@ -34,7 +34,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('mysonar') {
+                withSonarQubeEnv('sonar') {
                     sh """
                     $SCANNER_HOME/bin/sonar-scanner \
                     -Dsonar.projectName=Zomato-App \
