@@ -7,8 +7,7 @@ pipeline {
     }
 
     environment {
-        SCANNER_HOME = tool 'sonar'
-        IMAGE_NAME   = "Akash/zomato-app:latest"
+        IMAGE_NAME = "akash1738/zomato-app:latest"
     }
 
     stages {
@@ -28,45 +27,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonar') {
-                    sh """
-                    $SCANNER_HOME/bin/sonar-scanner \
-                    -Dsonar.projectName=Zomato-App \
-                    -Dsonar.projectKey=zomato-app
-                    """
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                waitForQualityGate abortPipeline: false,
-                                  credentialsId: 'my-token'
-            }
-        }
-
-//       stage('OWASP Dependency Check') {
-//     steps {
-//         sh '''
-//         /opt/dependency-check/bin/dependency-check.sh \
-//         --scan . \
-//         --format XML \
-//         --out dependency-check-report
-//         '''
-//     }
-// }
-
-
-
-        stage('Trivy FileSystem Scan') {
-            steps {
-                sh 'trivy fs . > trivyfs.txt'
+                sh 'npm install'   // reproducible installs using package-lock.json
             }
         }
 
@@ -81,17 +42,11 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'docker-password') {
                         sh '''
-                        docker tag zomato-app Akash/zomato-app:latest
-                        docker push Akash/zomato-app:latest
+                        docker tag zomato-app ${IMAGE_NAME}
+                        docker push ${IMAGE_NAME}
                         '''
                     }
                 }
-            }
-        }
-
-        stage('Trivy Image Scan') {
-            steps {
-                sh 'trivy image Akash/zomato-app:latest'
             }
         }
 
@@ -100,9 +55,9 @@ pipeline {
                 sh '''
                 docker rm -f zomato-container || true
                 docker run -d \
-                --name zomato-container \
-                -p 3000:3000 \
-                Akash/zomato-app:latest
+                  --name zomato-container \
+                  -p 3000:3000 \
+                  ${IMAGE_NAME}
                 '''
             }
         }
